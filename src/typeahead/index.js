@@ -286,7 +286,7 @@ var Typeahead = React.createClass({
 
   componentWillReceiveProps: function(nextProps) {
     this.setState({
-      visible: this.getOptionsForValue(this.state.entryValue, nextProps.options)
+      visible: this.getOptionsForValue(nextProps.value, nextProps.options)
     });
   },
 
