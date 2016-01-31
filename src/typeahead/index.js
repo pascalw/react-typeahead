@@ -221,11 +221,11 @@ var Typeahead = React.createClass({
   eventMap: function(event) {
     var events = {};
 
-    events[KeyEvent.DOM_VK_UP] = this.navUp;
-    events[KeyEvent.DOM_VK_DOWN] = this.navDown;
-    events[KeyEvent.DOM_VK_RETURN] = events[KeyEvent.DOM_VK_ENTER] = this._onEnter;
-    events[KeyEvent.DOM_VK_ESCAPE] = this._onEscape;
-    events[KeyEvent.DOM_VK_TAB] = this._onTab;
+    events[KeyEvent.DOM_VK_UP] = { fn: this.navUp, preventDefault: true };
+    events[KeyEvent.DOM_VK_DOWN] = { fn: this.navDown, preventDefault: true };
+    events[KeyEvent.DOM_VK_RETURN] = events[KeyEvent.DOM_VK_ENTER] = { fn: this._onEnter, preventDefault: true };
+    events[KeyEvent.DOM_VK_ESCAPE] = { fn: this._onEscape, preventDefault: true };
+    events[KeyEvent.DOM_VK_TAB] = { fn: this._onTab, preventDefault: false };
 
     return events;
   },
@@ -276,12 +276,13 @@ var Typeahead = React.createClass({
     var handler = this.eventMap()[event.keyCode];
 
     if (handler) {
-      handler(event);
+      handler.fn(event);
+
+      // Don't propagate the keystroke back to the DOM/browser
+      handler.preventDefault && event.preventDefault();
     } else {
       return this.props.onKeyDown(event);
     }
-    // Don't propagate the keystroke back to the DOM/browser
-    event.preventDefault();
   },
 
   componentWillReceiveProps: function(nextProps) {
